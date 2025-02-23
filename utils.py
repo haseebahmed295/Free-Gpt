@@ -1,3 +1,5 @@
+import logging
+import os
 import bpy
 import g4f
 import g4f.client
@@ -35,3 +37,15 @@ def stream_response(message , model):
     )
     for message in response:
         yield message.choices[0].delta.content
+
+def setup_logger():
+    log_path = os.path.join(os.path.dirname(__file__), 'g4f_callback.log')
+    logging.basicConfig(
+        level=logging.DEBUG,    
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        filename=log_path
+    )
+    logging.getLogger('markdown_it').setLevel(logging.WARNING)  # Silence Markdown parsing logs
+    logging.getLogger('rich').setLevel(logging.WARNING)  # Silence rich internal logs
+    
+    return logging.getLogger('G4F_Callback')

@@ -1,13 +1,13 @@
 schema_version = "1.0.0"
 id = "free_gpt"
-version = "1.2.2"
+version = "1.3.0"
 name = "Free Gpt"
 tagline = "Automate Blender using GPT without an API key"
 maintainer = "haseebahmad295 <quicktiptech@gmail.com>"
 type = "add-on"
 website = "https://github.com/haseebahmed295/blender-Free-Gpt"
 tags = [ "Animation", "Object",]
-wheels = [ "./wheels/aiohappyeyeballs-2.4.6-cp311-none-any.whl", "./wheels/aiohttp-3.11.12-cp311-cp311-win_amd64.whl", "./wheels/aiosignal-1.3.2-cp311-none-any.whl", "./wheels/attrs-25.1.0-cp311-none-any.whl", "./wheels/Brotli-1.1.0-cp311-cp311-win_amd64.whl", "./wheels/certifi-2025.1.31-cp311-none-any.whl", "./wheels/charset_normalizer-3.4.1-cp311-cp311-win_amd64.whl", "./wheels/frozenlist-1.5.0-cp311-cp311-win_amd64.whl", "./wheels/g4f-0.4.7.2-cp311-none-any.whl", "./wheels/idna-3.10-cp311-none-any.whl", "./wheels/multidict-6.1.0-cp311-cp311-win_amd64.whl", "./wheels/nest_asyncio-1.6.0-cp311-none-any.whl", "./wheels/propcache-0.3.0-cp311-cp311-win_amd64.whl", "./wheels/pycryptodome-3.21.0-cp311-abi3-win_amd64.whl", "./wheels/requests-2.32.3-cp311-none-any.whl", "./wheels/urllib3-2.3.0-cp311-none-any.whl", "./wheels/yarl-1.18.3-cp311-cp311-win_amd64.whl", "./wheels/g4f-0.4.7.3-cp311-none-any.whl",]
+wheels = [ "./wheels/aiohappyeyeballs-2.4.6-cp311-none-any.whl", "./wheels/aiohttp-3.11.12-cp311-cp311-win_amd64.whl", "./wheels/aiosignal-1.3.2-cp311-none-any.whl", "./wheels/attrs-25.1.0-cp311-none-any.whl", "./wheels/Brotli-1.1.0-cp311-cp311-win_amd64.whl", "./wheels/certifi-2025.1.31-cp311-none-any.whl", "./wheels/charset_normalizer-3.4.1-cp311-cp311-win_amd64.whl", "./wheels/frozenlist-1.5.0-cp311-cp311-win_amd64.whl", "./wheels/g4f-0.4.7.2-cp311-none-any.whl", "./wheels/idna-3.10-cp311-none-any.whl", "./wheels/multidict-6.1.0-cp311-cp311-win_amd64.whl", "./wheels/nest_asyncio-1.6.0-cp311-none-any.whl", "./wheels/propcache-0.3.0-cp311-cp311-win_amd64.whl", "./wheels/pycryptodome-3.21.0-cp311-abi3-win_amd64.whl", "./wheels/requests-2.32.3-cp311-none-any.whl", "./wheels/urllib3-2.3.0-cp311-none-any.whl", "./wheels/yarl-1.18.3-cp311-cp311-win_amd64.whl", "./wheels/g4f-0.4.7.3-cp311-none-any.whl", "./wheels/anyio-4.8.0-cp311-none-any.whl", "./wheels/frogmouth-0.9.2-cp311-none-any.whl", "./wheels/h11-0.14.0-cp311-none-any.whl", "./wheels/httpcore-0.17.3-cp311-none-any.whl", "./wheels/httpx-0.24.1-cp311-none-any.whl", "./wheels/importlib_metadata-8.6.1-cp311-none-any.whl", "./wheels/linkify_it_py-2.0.3-cp311-none-any.whl", "./wheels/markdown_it_py-3.0.0-cp311-none-any.whl", "./wheels/mdit_py_plugins-0.4.2-cp311-none-any.whl", "./wheels/mdurl-0.1.2-cp311-none-any.whl", "./wheels/pygments-2.19.1-cp311-none-any.whl", "./wheels/rich-13.9.4-cp311-none-any.whl", "./wheels/sniffio-1.3.1-cp311-none-any.whl", "./wheels/textual-0.43.2-cp311-none-any.whl", "./wheels/typing_extensions-4.12.2-cp311-none-any.whl", "./wheels/uc_micro_py-1.0.3-cp311-none-any.whl", "./wheels/xdg-6.0.0-cp311-none-any.whl", "./wheels/zipp-3.21.0-cp311-none-any.whl",]
 blender_version_min = "4.2.0"
 license = [ "SPDX:GPL-3.0-or-later",]
 

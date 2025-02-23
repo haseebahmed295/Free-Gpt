@@ -5,7 +5,7 @@ import bpy
 from . import toml
 import os
 import threading
-Modules = ["g4f"]
+Modules = ["g4f" , "rich"]
 
 class Module_Updater(bpy.types.Operator):
     bl_idname = "g4f.module_update"
@@ -48,11 +48,10 @@ class Module_Updater(bpy.types.Operator):
         Module_Updater.is_working = True
         toml_path = os.path.join(os.path.dirname(__file__), "blender_manifest.toml")
         wheels_path = os.path.join(os.path.dirname(__file__), "wheels")
-        module = Modules[0]
         # Start the upscaling thread
         module_thread = threading.Thread(
             target=self.install_modules,
-            args=(module,wheels_path, toml_path)
+            args=(Modules,wheels_path, toml_path)
         )
         module_thread.start()
         self.report({"INFO"}, "Updating Modules... 😎")
@@ -154,15 +153,19 @@ class Module_Updater(bpy.types.Operator):
             print(f"An error occurred: {str(e)}")
             self._is_error = True
  
-    def download_wheels(self, module_name, output_dir):
+    def download_wheels(self, module_name:list, output_dir):
         """Download the module's wheel files and output progress in real-time."""
         try:
             # Ensure the output directory exists
             os.makedirs(output_dir, exist_ok=True)
             
-            # Construct the pip download command
-            command = [sys.executable,"-m","pip", "download", module_name, f"--dest={output_dir}"]
             
+            
+            # Construct the pip download command
+            command = [sys.executable,"-m","pip", "download"]
+            command.extend(module_name)
+            command.append(f"--dest={output_dir}")
+            print(command)
             # Start the subprocess with real-time output
             process = subprocess.Popen(
                 command,
