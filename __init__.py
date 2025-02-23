@@ -1,3 +1,4 @@
+
 import re
 import traceback
 import bpy
@@ -6,6 +7,8 @@ import threading
 import inspect
 import sys
 import g4f
+
+from .dependencies import Module_Updater
 from .response import *
 from .get_models import *
 bl_info = {
@@ -23,13 +26,6 @@ bl_info = {
 
 from .system_commad import system_prompt
 
-def get_classes() -> list:
-    current_module = sys.modules[__name__]
-    classes = []
-    for name, obj in inspect.getmembers(current_module):
-        if inspect.isclass(obj) and obj.__module__ == __name__:
-            classes.append(obj)
-    return classes
 
 class Chat_PT_history(bpy.types.Panel):
     bl_label = "Chat History"
@@ -41,6 +37,7 @@ class Chat_PT_history(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         column = layout.column(align=True)
+        column.enabled = not Module_Updater.is_working
         column.label(text="Chat history:")
         for index, message in enumerate(context.scene.g4f_chat_history):
             if index % 2 == 0:
@@ -57,7 +54,6 @@ class Chat_PT_history(bpy.types.Panel):
         layout.operator(G4F_OT_ClearChat.bl_idname, text="Clear Chat")
         column.separator()
 
-
 class G4f_PT_main(bpy.types.Panel):
     bl_label = "Assistant GPT"
     bl_idname = "G4T_PT_Panel"
@@ -68,7 +64,7 @@ class G4f_PT_main(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         column = layout.column()
-
+        column.enabled = not Module_Updater.is_working
         column.label(text="GPT Model:")
         column.prop(context.scene, "ai_models", text="")
 
@@ -81,7 +77,8 @@ class G4f_PT_main(bpy.types.Panel):
         row = column.row(align=True)
         row.operator(G4F_OT_Callback.bl_idname, text=button_label)
         column.separator()
-
+        layout.progress(factor=0.75, type="RING", text="Generating...")
+        
 
 class G4F_OT_ClearChat(bpy.types.Operator):
     bl_idname = "g4f.clear_whole_chat"
@@ -95,14 +92,8 @@ class G4F_OT_ClearChat(bpy.types.Operator):
         context.scene.g4f_chat_history.clear()
         return {'FINISHED'}
 
-
-import bpy
-import threading
-import re
-import traceback
-
 class G4F_OT_Callback(bpy.types.Operator):
-    bl_idname = "free_gpt_thread.callback"
+    bl_idname = "g4f.callback"
     bl_label = "Callback for Thread"
     bl_description = "Callback Model Operator"
 
@@ -223,7 +214,7 @@ class G4F_OT_Callback(bpy.types.Operator):
         context.window_manager.event_timer_remove(self._timer)
 
 class G4T_Del_Message(bpy.types.Operator):
-    bl_idname = "gpt.del_message"
+    bl_idname = "g4f.del_message"
     bl_label = "Delete Message from History"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -270,11 +261,36 @@ class G4FPreferences(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        
+        col = layout.column()
+        if bpy.app.online_access:
+            current_version = g4f.version.utils.current_version
+            latest_version = g4f.version.utils.latest_version
+            col.label(text=f"Current Version: {current_version}")
+            col.label(text=f"Latest Version: {latest_version}")
+            if current_version != latest_version:
+                row = col.row()
+                row.label(text="New version available")
+                text = "Update Dependencies" if not Module_Updater.is_working else "Updating..."
+                row.operator(Module_Updater.bl_idname, text=text)
+            else:
+                col.label(text="You are up to date")
+        else:
+            col.label(text="No internet connection")
+    
+classes = [
+    Chat_PT_history,
+    G4f_PT_main,
+    G4F_OT_ClearChat,
+    G4F_OT_Callback,
+    G4T_Del_Message,
+    G4F_OT_ShowCode,
+    G4FPreferences,
+    Module_Updater,
+]
 
 def register():
-    for cls in get_classes():
-            bpy.utils.register_class(cls)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.Scene.g4f_chat_history = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     bpy.types.Scene.ai_models = bpy.props.EnumProperty(
         name="AI Model",
@@ -291,8 +307,8 @@ def register():
     bpy.types.Scene.g4f_button_pressed = bpy.props.BoolProperty()
 
 def unregister():
-    for cls in get_classes():
-            bpy.utils.unregister_class(cls)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.g4f_chat_history
     del bpy.types.Scene.g4f_chat_input

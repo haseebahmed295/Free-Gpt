@@ -1,0 +1,85 @@
+2025-02-23 08:52:24,912 - INFO - Operation invoked with input length: 10
+2025-02-23 08:52:24,912 - INFO - Starting code generation
+2025-02-23 08:52:24,912 - INFO - Generating code with model: gpt-4
+2025-02-23 08:52:24,915 - INFO - Modal operation started
+2025-02-23 08:52:24,915 - INFO - User prompt: write code...
+2025-02-23 08:52:24,915 - INFO - Using streaming mode
+2025-02-23 08:52:46,241 - ERROR - Code generation failed
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\__init__.py", line 233, in generate_g4f_code
+    logger.debug(f"Stream chunk: {chunk[:50]}...")
+                                  ~~~~~^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-02-23 08:52:54,916 - ERROR - Operation timed out
+2025-02-23 08:52:54,916 - INFO - Cancelling operation
+2025-02-23 08:52:54,916 - INFO - Cleaning up operation
+2025-02-23 10:24:40,094 - INFO - Starting code generation
+2025-02-23 10:24:40,094 - INFO - Generating code with model: gpt-4
+2025-02-23 10:24:40,094 - INFO - Modal operation started
+2025-02-23 10:24:40,094 - INFO - User prompt: Make 100 cubes...
+2025-02-23 10:24:40,094 - INFO - Using streaming mode
+2025-02-23 10:24:54,340 - ERROR - Code generation failed
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\__init__.py", line 228, in generate_g4f_code
+    logger.debug(f"Stream chunk: {chunk[:50]}...")
+                                  ~~~~~^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-02-23 10:26:54,495 - INFO - Starting code generation
+2025-02-23 10:26:54,495 - INFO - Generating code with model: gpt-4
+2025-02-23 10:26:54,495 - INFO - Modal operation started
+2025-02-23 10:26:54,495 - INFO - User prompt: write code...
+2025-02-23 10:26:54,495 - INFO - Using streaming mode
+2025-02-23 10:27:00,122 - INFO - Stream chunk: Sure! What kind of code would you like me to help ...
+2025-02-23 10:27:00,122 - ERROR - Code generation failed
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\__init__.py", line 238, in generate_g4f_code
+    raise ValueError("No valid code block found in AI response")
+ValueError: No valid code block found in AI response
+2025-02-23 10:27:53,371 - INFO - Starting code generation
+2025-02-23 10:27:53,371 - INFO - Generating code with model: gpt-4
+2025-02-23 10:27:53,371 - INFO - Modal operation started
+2025-02-23 10:27:53,371 - INFO - User prompt: make 100 cubes...
+2025-02-23 10:27:53,371 - INFO - Using streaming mode
+2025-02-23 10:28:18,052 - INFO - Stream chunk: To clarify, are you asking for a visual representation of 100 cubes or are you asking for something like a mathematical representation, such as the sum of cubes or cube numbers? Let me know what you have in mind!
+2025-02-23 10:28:18,052 - ERROR - Code generation failed
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\__init__.py", line 238, in generate_g4f_code
+    raise ValueError("No valid code block found in AI response")
+ValueError: No valid code block found in AI response
+2025-02-23 10:28:23,373 - ERROR - Operation timed out
+2025-02-23 10:28:23,373 - INFO - Cancelling operation
+2025-02-23 10:28:23,373 - INFO - Cleaning up operation
+2025-02-23 10:29:52,741 - INFO - Starting code generation
+2025-02-23 10:29:52,741 - INFO - Generating code with model: deepseek-r1
+2025-02-23 10:29:52,741 - INFO - Modal operation started
+2025-02-23 10:29:52,741 - INFO - User prompt: make 100 cubes on random locatinos...
+2025-02-23 10:29:52,741 - INFO - Using streaming mode
+2025-02-23 10:30:22,751 - ERROR - Operation timed out
+2025-02-23 10:30:22,751 - INFO - Cancelling operation
+2025-02-23 10:30:22,751 - INFO - Cleaning up operation
+2025-02-23 10:32:17,219 - INFO - Starting code generation
+2025-02-23 10:32:17,219 - INFO - Generating code with model: gpt-4o-mini
+2025-02-23 10:32:17,219 - INFO - Modal operation started
+2025-02-23 10:32:17,219 - INFO - User prompt: make 100 cubes...
+2025-02-23 10:32:17,219 - INFO - Using streaming mode
+2025-02-23 10:33:21,518 - INFO - Starting code generation
+2025-02-23 10:33:21,518 - INFO - Generating code with model: gpt-4o-mini
+2025-02-23 10:33:21,518 - INFO - Modal operation started
+2025-02-23 10:33:21,518 - INFO - User prompt: make 100 cube on random loc...
+2025-02-23 10:33:21,518 - INFO - Using streaming mode
+2025-02-23 10:33:28,786 - INFO - Code extracted: import bpy
+import random
+
+# Create a new material with a random color
+def create_random_material():
+...
+2025-02-23 10:33:28,786 - INFO - Generation complete, executing callback
+2025-02-23 10:33:28,786 - INFO - Adding user message to history
+2025-02-23 10:33:28,786 - INFO - Executing generated code
+2025-02-23 10:33:28,786 - ERROR - Code execution failed
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\__init__.py", line 272, in callback
+    exec(output, {'bpy': bpy, '__builtins__': {}})
+  File "<string>", line 1, in <module>
+ImportError: __import__ not found
+2025-02-23 10:33:28,786 - INFO - Cleaning up operation
