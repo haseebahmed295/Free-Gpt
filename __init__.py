@@ -12,36 +12,47 @@ bl_info = {
     "tracker_url": "",
 }
 
+
+from .utils import create_models
 from .dependencies import Module_Updater
-from .get_models import get_models
 from .ui_op import G4F_OT_ClearChat, G4F_OT_ShowCode ,G4T_Del_Message 
-from .interface import Chat_PT_history,G4f_PT_main , G4FPreferences
-from .prompt_op import G4F_OT_Callback
+from .interface import Chat_PT_history,G4f_PT_main 
+from .prompt_op import G4F_OT_Callback , G4F_TEST_OT_TestModels
 import bpy
-import bpy.props
 import g4f
 
-    
+class G4FPreferences(bpy.types.AddonPreferences):
+    bl_idname = __name__
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        if bpy.app.online_access:
+            if context.scene.g4f_check_update:
+                row = col.row()
+                row.label(text="New version available")
+                text = "Update Dependencies" if not Module_Updater.is_working else "Updating..."
+                row.operator(Module_Updater.bl_idname, text=text)
+            else:
+                col.label(text="You are up to date")
+        else:
+            col.label(text="No internet connection")
 classes = [
+    G4FPreferences,
     Chat_PT_history,
     G4f_PT_main,
     G4F_OT_ClearChat,
     G4F_OT_Callback,
     G4T_Del_Message,
     G4F_OT_ShowCode,
-    G4FPreferences,
     Module_Updater,
+    G4F_TEST_OT_TestModels
 ]
-
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.Scene.g4f_chat_history = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
-    bpy.types.Scene.ai_models = bpy.props.EnumProperty(
-        name="AI Model",
-        description="Select the AI model to use",
-        items=get_models(),
-    )
+    create_models()
     bpy.types.Scene.g4f_chat_input = bpy.props.StringProperty(
         name="Message",
         description="Enter your Command",

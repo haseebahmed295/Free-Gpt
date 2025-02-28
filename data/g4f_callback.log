@@ -1,0 +1,97 @@
+2025-02-27 19:23:19,671 - INFO - Starting new G4F callback operation
+2025-02-27 19:23:19,677 - DEBUG - Launching thread with model: gpt-4o, input length: 14
+2025-02-27 19:23:19,677 - INFO - Starting code generation
+2025-02-27 19:23:19,677 - DEBUG - Using streaming response
+2025-02-27 19:23:19,677 - DEBUG - Using proactor: IocpProactor
+2025-02-27 19:23:19,687 - DEBUG - Using proactor: IocpProactor
+2025-02-27 19:23:19,719 - ERROR - Unclosed client session
+client_session: <g4f.requests.aiohttp.StreamSession object at 0x000002E18D765C50>
+2025-02-27 19:23:19,719 - ERROR - Unclosed client session
+client_session: <g4f.requests.aiohttp.StreamSession object at 0x000002E193756D90>
+2025-02-27 19:23:19,719 - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002E193764210>
+2025-02-27 19:23:19,719 - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002E19264DB50>
+2025-02-27 19:23:19,719 - ERROR - Unclosed client session
+client_session: <g4f.requests.aiohttp.StreamSession object at 0x000002E1937BB950>
+2025-02-27 19:23:40,437 - DEBUG - Using proactor: IocpProactor
+2025-02-27 19:23:41,927 - DEBUG - Using proactor: IocpProactor
+2025-02-27 19:23:41,934 - DEBUG - Starting new HTTPS connection (1): jmuz.me:443
+2025-02-27 19:23:42,567 - DEBUG - https://jmuz.me:443 "GET /gpt/api/v2/models HTTP/1.1" 503 256
+2025-02-27 19:23:42,577 - DEBUG - Starting new HTTPS connection (1): jmuz.me:443
+2025-02-27 19:23:42,987 - DEBUG - https://jmuz.me:443 "GET /gpt/api/v2/models HTTP/1.1" 503 256
+2025-02-27 19:23:43,883 - ERROR - Error in code generation: RetryProvider failed:
+OpenaiChat: NoValidHarFileError: har_and_cookies dir is not readable
+Liaobots: ResponseStatusError: Response 402: Error
+ChatGptEs: IndexError: list index out of range
+Copilot: MissingRequirementsError: Install or update "curl_cffi" package | pip install -U curl_cffi
+Jmuz: ResponseStatusError: Response 503: HTML content
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\prompt_op.py", line 100, in generate_g4f_code
+    for chunk in stream_response(formatted_messages, model):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\utils.py", line 40, in stream_response
+    for message in response:
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\.local\lib\python3.11\site-packages\g4f\client\__init__.py", line 141, in iter_append_model_and_provider
+    yield from response
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\.local\lib\python3.11\site-packages\g4f\client\__init__.py", line 59, in iter_response
+    for chunk in response:
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\.local\lib\python3.11\site-packages\g4f\tools\run_tools.py", line 204, in iter_run_tools
+    for chunk in iter_callback(model=model, messages=messages, provider=provider, **kwargs):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\.local\lib\python3.11\site-packages\g4f\providers\retry_provider.py", line 73, in create_completion
+    raise_exceptions(exceptions)
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\.local\lib\python3.11\site-packages\g4f\providers\retry_provider.py", line 238, in raise_exceptions
+    raise RetryProviderError("RetryProvider failed:\n" + "\n".join([
+g4f.errors.RetryProviderError: RetryProvider failed:
+OpenaiChat: NoValidHarFileError: har_and_cookies dir is not readable
+Liaobots: ResponseStatusError: Response 402: Error
+ChatGptEs: IndexError: list index out of range
+Copilot: MissingRequirementsError: Install or update "curl_cffi" package | pip install -U curl_cffi
+Jmuz: ResponseStatusError: Response 503: HTML content
+
+2025-02-27 19:23:43,888 - ERROR - Operation cancelled with error: RetryProvider failed:
+OpenaiChat: NoValidHarFileError: har_and_cookies dir is not readable
+Liaobots: ResponseStatusError: Response 402: Error
+ChatGptEs: IndexError: list index out of range
+Copilot: MissingRequirementsError: Install or update "curl_cffi" package | pip install -U curl_cffi
+Jmuz: ResponseStatusError: Response 503: HTML content
+2025-02-27 19:23:43,888 - INFO - Operation aborted successfully
+2025-02-27 19:23:56,284 - INFO - Starting new G4F callback operation
+2025-02-27 19:23:56,284 - DEBUG - Launching thread with model: gpt-4, input length: 14
+2025-02-27 19:23:56,287 - INFO - Starting code generation
+2025-02-27 19:23:56,287 - DEBUG - Using streaming response
+2025-02-27 19:23:56,287 - DEBUG - Using proactor: IocpProactor
+2025-02-27 19:23:56,287 - DEBUG - Starting new HTTPS connection (1): jmuz.me:443
+2025-02-27 19:23:56,897 - DEBUG - https://jmuz.me:443 "GET /gpt/api/v2/models HTTP/1.1" 503 256
+2025-02-27 19:23:56,897 - DEBUG - Starting new HTTPS connection (1): jmuz.me:443
+2025-02-27 19:23:57,417 - DEBUG - https://jmuz.me:443 "GET /gpt/api/v2/models HTTP/1.1" 503 256
+2025-02-27 19:23:57,995 - DEBUG - Using proactor: IocpProactor
+2025-02-27 19:24:08,462 - ERROR - Unclosed client session
+client_session: <g4f.requests.aiohttp.StreamSession object at 0x000002E192552C50>
+2025-02-27 19:24:08,462 - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002E1926C0A90>
+2025-02-27 19:24:11,262 - DEBUG - Streaming complete
+2025-02-27 19:24:11,262 - INFO - Code generated successfully
+2025-02-27 19:24:11,267 - DEBUG - Operation completed, executing callback
+2025-02-27 19:24:11,267 - DEBUG - Adding user message to chat history
+2025-02-27 19:24:11,269 - INFO - Executing generated Blender code
+2025-02-27 19:24:11,517 - INFO - Code executed successfully
+2025-02-27 19:24:11,517 - DEBUG - Adding assistant response to chat history
+2025-02-27 19:24:11,522 - INFO - Callback operation completed
+2025-02-28 12:35:12,858 - INFO - Starting new G4F callback operation
+2025-02-28 12:35:12,858 - DEBUG - Launching thread with model: midjourney, input length: 5
+2025-02-28 12:35:12,858 - INFO - Starting code generation
+2025-02-28 12:35:12,858 - DEBUG - Using non-streaming response
+2025-02-28 12:35:12,858 - DEBUG - Using proactor: IocpProactor
+2025-02-28 12:35:12,869 - DEBUG - Starting new HTTPS connection (1): image.pollinations.ai:443
+2025-02-28 12:35:13,896 - DEBUG - https://image.pollinations.ai:443 "GET /models HTTP/1.1" 200 16
+2025-02-28 12:35:13,898 - DEBUG - Starting new HTTPS connection (1): text.pollinations.ai:443
+2025-02-28 12:35:14,637 - DEBUG - https://text.pollinations.ai:443 "GET /models HTTP/1.1" 200 None
+2025-02-28 12:35:18,203 - ERROR - Error in code generation: list index out of range
+Traceback (most recent call last):
+  File "C:\Users\Just\AppData\Roaming\Blender Foundation\Blender\4.3\extensions\user_default\Free-Gpt\prompt_op.py", line 125, in generate_g4f_code
+    code = re.findall(r'```(.*?)```', completion_text, re.DOTALL)[0]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+2025-02-28 12:35:18,209 - ERROR - Operation cancelled with error: list index out of range
+2025-02-28 12:35:18,209 - INFO - Operation aborted successfully

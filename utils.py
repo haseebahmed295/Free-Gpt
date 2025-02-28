@@ -3,6 +3,8 @@ import os
 import bpy
 import g4f
 import g4f.client
+
+from .get_models import get_models
 g4f.debug.version_check = False
 def wrap_prompt(prompt):
     wrapped = f"""{prompt} . Don't write code which uses bpy.context.active_object.Make sure to return all code in only one code blocks 
@@ -39,7 +41,7 @@ def stream_response(message , model):
         yield message.choices[0].delta.content
 
 def setup_logger():
-    log_path = os.path.join(os.path.dirname(__file__), 'g4f_callback.log')
+    log_path = os.path.join(os.path.dirname(__file__),"data", 'g4f_callback.log')
     logging.basicConfig(
         level=logging.DEBUG,    
         format='%(asctime)s - %(levelname)s - %(message)s',
@@ -49,3 +51,10 @@ def setup_logger():
     logging.getLogger('rich').setLevel(logging.WARNING)  # Silence rich internal logs
     
     return logging.getLogger('G4F_Callback')
+
+def create_models():
+    bpy.types.Scene.ai_models = bpy.props.EnumProperty(
+        name="AI Model",
+        description="Select the AI model to use",
+        items=get_models(),
+    )

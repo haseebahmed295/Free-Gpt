@@ -3,7 +3,7 @@ import bpy
 import bpy.props
 from .dependencies import Module_Updater
 from .ui_op import G4F_OT_ClearChat , G4T_Del_Message , G4F_OT_ShowCode
-from .prompt_op import G4F_OT_Callback
+from .prompt_op import G4F_OT_Callback, G4F_TEST_OT_TestModels
 class Chat_PT_history(bpy.types.Panel):
     bl_label = "Chat History"
     bl_idname = "G4T_PT_History"
@@ -42,7 +42,9 @@ class G4f_PT_main(bpy.types.Panel):
         layout = self.layout
         column = layout.column()
         column.enabled = not Module_Updater.is_working
-        column.label(text="GPT Model:")
+        row = column.row(align=True)
+        row.label(text="GPT Model:")
+        row.operator(G4F_TEST_OT_TestModels.bl_idname , icon="FORCE_CHARGE" , text="")
         column.prop(context.scene, "ai_models", text="")
 
         column.label(text="Enter your message:")
@@ -56,20 +58,3 @@ class G4f_PT_main(bpy.types.Panel):
         column.separator()
         layout.progress(factor=0.75, type="RING", text="Generating...")
         
-class G4FPreferences(bpy.types.AddonPreferences):
-    bl_idname = __name__
-
-
-    def draw(self, context):
-        layout = self.layout
-        col = layout.column()
-        if bpy.app.online_access:
-            if context.scene.g4f_check_update:
-                row = col.row()
-                row.label(text="New version available")
-                text = "Update Dependencies" if not Module_Updater.is_working else "Updating..."
-                row.operator(Module_Updater.bl_idname, text=text)
-            else:
-                col.label(text="You are up to date")
-        else:
-            col.label(text="No internet connection")

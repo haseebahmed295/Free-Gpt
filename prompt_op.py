@@ -1,3 +1,5 @@
+import json
+import os
 import re
 import traceback
 import bpy
@@ -8,8 +10,10 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 from .dependencies import Module_Updater
-from .utils import setup_logger , wrap_prompt , append_error_as_comment , stream_response
+from .utils import create_models, setup_logger , wrap_prompt , append_error_as_comment , stream_response
 from .system_commad import system_prompt
+import asyncio
+from g4f.client import AsyncClient
 
 class G4F_OT_Callback(bpy.types.Operator):
     bl_idname = "g4f.callback"
@@ -174,4 +178,102 @@ class G4F_OT_Callback(bpy.types.Operator):
         self.is_done = True
         self.logger.info("Callback operation completed")
         self.console.print("[bold cyan]Operation completed[/bold cyan]")
+
+class G4F_TEST_OT_TestModels(bpy.types.Operator):
+    """Checks for working models and updates the list of active models.
+    This operator is used to test all available models and update the list of active models.
+    """
+    bl_idname = "g4f.update_model_list"
+    bl_label = "Test g4f Models"
+    bl_options = {'REGISTER'}
+    bl_description = "Test all available models and update the list of active models.\n This may take a while."
+
+    _timer = None
+    _loop = None
+    _task = None
+    working = []
+    is_working = False
+    @classmethod
+    def poll(cls, context: bpy.types.Context) -> bool:
+        return not (Module_Updater.is_working or G4F_TEST_OT_TestModels.is_working or context.scene.g4f_button_pressed) 
+
+    def modal(self, context: bpy.types.Context, event: bpy.types.Event) -> set:
+        """Handle timer events for asynchronous task completion."""
+
+        if event.type == 'TIMER':
+            self._loop.run_until_complete(asyncio.sleep(0))  # Process pending tasks
+            
+            if self._task.done():
+                context.window_manager.event_timer_remove(self._timer)
+                self._loop.stop()
+                self._loop.close()
+                
+                non_working_models = set(g4f.models._all_models) - set(self.working)
+                non_working_models = list(non_working_models)
+                
+                path = os.path.join(os.path.dirname(__file__), "data", "models.json")
+                
+                if not os.path.exists(path):
+                    with open(path, 'w') as f:
+                        json.dump({"active": [], "deprecated": []}, f)
+                
+                with open(path) as f:
+                    data = json.load(f)
+                data["active"] = self.working
+                data["deprecated"] = non_working_models
+                with open(path, 'w') as f:
+                    json.dump(data, f)
+                
+                create_models()
+                context.area.tag_redraw()
+                G4F_TEST_OT_TestModels.is_working = False
+
+                return {'FINISHED'}
+        
+        return {'PASS_THROUGH'}
+
+    async def run_provider(self, model):
+        # print(f"Testing model: {model}")  # Debug: Track progress
+        try:
+            client = AsyncClient()
+            response = await client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": "Hello"}],
+            )
+            # print(f"{model}: {response.choices[0].message.content}")
+            self.working.append(model)
+        except Exception as e:
+            # print(f"{model} failed: {e}")
+            pass
+
+    async def run_all(self):
+        print("Starting async model tests")
+        calls = [self.run_provider(provider) for provider in g4f.models._all_models]
+        await asyncio.gather(*calls)
+
+    def execute(self, context):
+        print("Operator started")  # Debug: Check if operator runs
+        
+        # Reset lists
+        self.working = []
+        G4F_TEST_OT_TestModels.is_working = True
+        
+        
+        # Create and set up a new event loop
+        self._loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self._loop)
+        self._task = self._loop.create_task(self.run_all())
+        
+        # Start the modal timer
+        self._timer = context.window_manager.event_timer_add(0.1, window=context.window)
+        context.window_manager.modal_handler_add(self)
+        
+        return {'RUNNING_MODAL'}
+
+    def cancel(self, context):
+        if self._timer:
+            context.window_manager.event_timer_remove(self._timer)
+        if self._loop and self._loop.is_running():
+            self._loop.stop()
+            self._loop.close()
 
