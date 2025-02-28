@@ -1,9 +1,9 @@
-
 import bpy
 import bpy.props
 from .dependencies import Module_Updater
 from .ui_op import G4F_OT_ClearChat , G4T_Del_Message , G4F_OT_ShowCode
 from .prompt_op import G4F_OT_Callback, G4F_TEST_OT_TestModels
+
 class Chat_PT_history(bpy.types.Panel):
     bl_label = "Chat History"
     bl_idname = "G4T_PT_History"

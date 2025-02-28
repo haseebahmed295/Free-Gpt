@@ -1,7 +1,7 @@
 import json
 import g4f
 import os
-
+from .Settings import JSON_PATH
 from typing import List, Tuple
 
 def get_models() -> List[Tuple[str, str, str]]:
@@ -10,7 +10,7 @@ def get_models() -> List[Tuple[str, str, str]]:
     Returns:
         List[Tuple[str, str, str]]: A list of tuples where each tuple contains the model name repeated three times.
     """
-    file_path = os.path.join(os.path.dirname(__file__), "data", "models.json")
+    file_path = JSON_PATH
     if not os.path.exists(file_path):
         deprecated_models = set()
     else:

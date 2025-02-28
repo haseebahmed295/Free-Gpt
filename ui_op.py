@@ -1,8 +1,6 @@
-
 import bpy
-import bpy.props
-
 from .utils import split_area_to_text_editor
+
 class G4F_OT_ClearChat(bpy.types.Operator):
     bl_idname = "g4f.clear_whole_chat"
     bl_label = "Clear Chat"

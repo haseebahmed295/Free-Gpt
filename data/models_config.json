@@ -1,0 +1,16 @@
+{
+  "active": [
+  ],
+  "deprecated": [
+  ],
+  "image_models": [
+    "sdxl-turbo",
+    "sd-3.5",
+    "flux",
+    "flux-pro",
+    "flux-dev",
+    "flux-schnell",
+    "dall-e-3",
+    "midjourney"
+  ]
+}

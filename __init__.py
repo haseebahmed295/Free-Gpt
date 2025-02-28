@@ -37,6 +37,7 @@ class G4FPreferences(bpy.types.AddonPreferences):
                 col.label(text="You are up to date")
         else:
             col.label(text="No internet connection")
+
 classes = [
     G4FPreferences,
     Chat_PT_history,
@@ -48,6 +49,7 @@ classes = [
     Module_Updater,
     G4F_TEST_OT_TestModels
 ]
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -62,11 +64,14 @@ def register():
     bpy.types.PropertyGroup.content = bpy.props.StringProperty()
     bpy.types.Scene.g4f_button_pressed = bpy.props.BoolProperty()
     
+    update_available = False
     if bpy.app.online_access:
-        update = not (g4f.version.utils.current_version == g4f.version.utils.latest_version)
-    else:
-        update = False
-    bpy.types.Scene.g4f_check_update = bpy.props.BoolProperty(default=update)
+        try:
+            update_available = g4f.version.utils.current_version != g4f.version.utils.latest_version
+        except:
+            update_available = False
+    
+    bpy.types.Scene.g4f_check_update = bpy.props.BoolProperty(default=update_available)
 
 def unregister():
     for cls in classes:
