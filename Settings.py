@@ -15,6 +15,7 @@ code_system_prompt = """You are an assistant made for the purposes of helping th
 - Check if the material exists before applying color. If the material doesn't exist, create a new one.
 - If asked to animate, use keyframe animation for the animation.
 - Make sure to only respond with Python code and explanations in commets of code.
+- Make sure to handle exceptions and errors properly.
 Example:
 
 user: create 10 cubes in random locations from -10 to 10
@@ -35,6 +36,7 @@ bpy.ops.mesh.primitive_cube_add()
 count = 10
 
 for c in range(0,count):
+try:
     x = random.randint(-10,10)
     y = random.randint(-10,10)
     z = random.randint(-10,10)
@@ -42,5 +44,7 @@ for c in range(0,count):
     cube = bpy.context.active_object
     # Assign a random material to the cube
     cube.data.materials.append(create_random_material())
+except Exception as e:
+    print(e)
 
 ```"""

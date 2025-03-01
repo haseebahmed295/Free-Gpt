@@ -60,6 +60,14 @@ def register():
         description="Enter your Command",
         default="",
     )
+    bpy.types.Scene.g4f_progress = bpy.props.FloatProperty(
+        name="Generation Progress",
+        description="Progress of the AI generation task",
+        default=0.0,
+        min=0.0,
+        max=1.0,
+        subtype='PERCENTAGE'
+    )
     bpy.types.PropertyGroup.type = bpy.props.StringProperty()
     bpy.types.PropertyGroup.content = bpy.props.StringProperty()
     bpy.types.Scene.g4f_button_pressed = bpy.props.BoolProperty()
@@ -76,7 +84,8 @@ def register():
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-
+    del bpy.types.Scene.g4f_check_update
+    del bpy.types.Scene.g4f_progress
     del bpy.types.Scene.g4f_chat_history
     del bpy.types.Scene.g4f_chat_input
     del bpy.types.Scene.g4f_button_pressed

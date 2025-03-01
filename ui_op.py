@@ -45,10 +45,7 @@ class G4F_OT_ShowCode(bpy.types.Operator):
         code_text.clear()
         code_text.write(self.code)
 
-        editor_area = next((area for area in context.screen.areas if area.type == 'TEXT_EDITOR'), None)
-
-        if editor_area is None:
-            editor_area = split_area_to_text_editor(context)
+        editor_area = split_area_to_text_editor(context)
 
         editor_area.spaces.active.text = code_text
         bpy.ops.text.jump(line=1)
