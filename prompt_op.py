@@ -12,8 +12,14 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 from .dependencies import Module_Updater
-from .utils import create_models, setup_logger , wrap_prompt , append_error_as_comment , stream_response 
-from .Settings import code_system_prompt , JSON_PATH , IMAGE_SYSTEM_PROMPT
+from .utils import (
+    create_models,
+    setup_logger,
+    wrap_prompt,
+    append_error_as_comment,
+    stream_response,
+)
+from .Settings import code_system_prompt, JSON_PATH, IMAGE_SYSTEM_PROMPT
 
 import os
 import json
@@ -27,19 +33,26 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 from .dependencies import Module_Updater
-from .utils import create_models, setup_logger, wrap_prompt, append_error_as_comment, stream_response
+from .utils import (
+    create_models,
+    setup_logger,
+    wrap_prompt,
+    append_error_as_comment,
+    stream_response,
+)
 from .Settings import code_system_prompt, JSON_PATH, IMAGE_SYSTEM_PROMPT
 
 
 class G4F_OT_Callback(bpy.types.Operator):
     """Operator to handle AI generation tasks with progress monitoring in Blender."""
-    
+
     bl_idname = "g4f.callback"
     bl_label = "Callback for Thread"
     bl_description = "Callback Model Operator"
 
     # --- Initialization ---
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         """Initialize thread-safe progress tracking."""
         self._progress = 0.0  # Thread-safe progress variable (0.0 to 1.0)
         self._progress_lock = threading.Lock()  # Lock for thread-safe progress updates
@@ -55,9 +68,11 @@ class G4F_OT_Callback(bpy.types.Operator):
         Returns:
             bool: True if the operator can run, False otherwise.
         """
-        return (not context.scene.g4f_button_pressed and 
-                not Module_Updater.is_working and 
-                context.scene.g4f_chat_input)
+        return (
+            not context.scene.g4f_button_pressed
+            and not Module_Updater.is_working
+            and context.scene.g4f_chat_input
+        )
 
     # --- Main Execution Methods ---
     def execute(self, context):
@@ -96,18 +111,23 @@ class G4F_OT_Callback(bpy.types.Operator):
         system_prompt = self.get_system_prompt(ai_model)
 
         # Launch generation thread
-        self.logger.debug(f"Launching thread with model: {ai_model}, input length: {len(chat_input)}")
+        self.logger.debug(
+            f"Launching thread with model: {ai_model}, input length: {len(chat_input)}"
+        )
         self.console.print(f"[cyan]Using model:[/cyan] [italic]{ai_model}[/italic]")
-        self._thread = threading.Thread(target=self.generate_g4f_code, args=(
-            chat_input, chat_history, ai_model, system_prompt
-        ))
+        self._thread = threading.Thread(
+            target=self.generate_g4f_code,
+            args=(chat_input, chat_history, ai_model, system_prompt),
+        )
         self._thread.start()
 
         # Set up modal timer
-        self._timer = context.window_manager.event_timer_add(0.01, window=context.window)
-        self.report({'INFO'}, 'Generating... (ESC=Abort)')
+        self._timer = context.window_manager.event_timer_add(
+            0.01, window=context.window
+        )
+        self.report({"INFO"}, "Generating... (ESC=Abort)")
         context.window_manager.modal_handler_add(self)
-        return {'RUNNING_MODAL'}
+        return {"RUNNING_MODAL"}
 
     def modal(self, context, event):
         """Handle modal events during generation.
@@ -119,27 +139,31 @@ class G4F_OT_Callback(bpy.types.Operator):
         Returns:
             set: Status indicating how to proceed ('PASS_THROUGH', 'CANCELLED', 'FINISHED').
         """
-        if event.type == 'ESC':
+        if event.type == "ESC":
             self.logger.info("User requested abort via ESC key")
-            self.console.print("[bold red]ESC pressed - Aborting operation...[/bold red]")
-            self.report({'INFO'}, "Aborting...")
+            self.console.print(
+                "[bold red]ESC pressed - Aborting operation...[/bold red]"
+            )
+            self.report({"INFO"}, "Aborting...")
             self.is_cancelled = True
-            return {'PASS_THROUGH'}
+            return {"PASS_THROUGH"}
 
-        if event.type == 'TIMER':
+        if event.type == "TIMER":
             with self._progress_lock:
                 context.scene.g4f_progress = self._progress
             context.area.tag_redraw()  # Redraw UI to reflect progress
             if self.is_cancelled and self.cancel_done:
                 self.cleanup(context)
-                return {'CANCELLED'}
+                return {"CANCELLED"}
             if self.is_done and not self.is_cancelled:
                 self.logger.debug("Operation completed, executing callback")
-                self.console.print("[green]Generation complete, executing callback...[/green]")
+                self.console.print(
+                    "[green]Generation complete, executing callback...[/green]"
+                )
                 self.callback(context, self.code_buffers, self.is_image_model)
                 self.cleanup(context)
-                return {'FINISHED'}
-        return {'PASS_THROUGH'}
+                return {"FINISHED"}
+        return {"PASS_THROUGH"}
 
     # --- Generation Logic ---
     def generate_g4f_code(self, prompt, chat_history, model, system_prompt):
@@ -158,7 +182,11 @@ class G4F_OT_Callback(bpy.types.Operator):
         formatted_messages = [{"role": "system", "content": system_prompt}]
         for message in chat_history[-10:]:
             role = "assistant" if message.type == "assistant" else message.type.lower()
-            content = f"```\n{message.content}\n```" if message.type == "assistant" else message.content
+            content = (
+                f"```\n{message.content}\n```"
+                if message.type == "assistant"
+                else message.content
+            )
             formatted_messages.append({"role": role, "content": content})
         if self.is_image_model:
             formatted_messages.append({"role": "user", "content": prompt})
@@ -173,40 +201,54 @@ class G4F_OT_Callback(bpy.types.Operator):
                 self._progress = 0.1  # Initializing
 
             if stream:
-                completion_text = ''
+                completion_text = ""
                 self.logger.debug("Using streaming response")
                 self.console.print("[magenta]Streaming response...[/magenta]")
-                with Live(console=self.console, refresh_per_second=30, transient=False) as live:
+                with Live(
+                    console=self.console, refresh_per_second=30, transient=False
+                ) as live:
                     chunk_count = 0
                     for chunk in stream_response(formatted_messages, model):
                         if self.is_cancelled:
                             self.logger.warning("Stream cancelled by user")
-                            self.console.print("[yellow]Generation cancelled by user[/yellow]")
+                            self.console.print(
+                                "[yellow]Generation cancelled by user[/yellow]"
+                            )
                             self.cancel_done = True
                             return
-                        
+
                         # Parse chunk if it's in SSE format (data: {"content": "..."})
                         if isinstance(chunk, str):
                             if "data: " in chunk:
                                 cleaned_chunk = chunk.replace("data: ", "").strip()
-                                self.logger.debug(f"Raw chunk: {repr(chunk)} -> Cleaned: {repr(cleaned_chunk)}")
+                                self.logger.debug(
+                                    f"Raw chunk: {repr(chunk)} -> Cleaned: {repr(cleaned_chunk)}"
+                                )
                                 try:
                                     chunk_data = json.loads(cleaned_chunk)
                                     content = chunk_data.get("content", "")
-                                    if content is None:  # Handle cases where content might be null
+                                    if (
+                                        content is None
+                                    ):  # Handle cases where content might be null
                                         content = ""
-                                    self.logger.debug(f"Parsed chunk content: {repr(content)}")
+                                    self.logger.debug(
+                                        f"Parsed chunk content: {repr(content)}"
+                                    )
                                 except json.JSONDecodeError as e:
-                                    self.logger.warning(f"Invalid chunk format: {repr(chunk)} - Error: {str(e)}")
+                                    self.logger.warning(
+                                        f"Invalid chunk format: {repr(chunk)} - Error: {str(e)}"
+                                    )
                                     content = chunk  # Fallback to raw chunk
                             else:
                                 content = chunk  # Plain text chunk
 
-                        completion_text += content or ''
+                        completion_text += content or ""
                         chunk_count += 1
                         with self._progress_lock:
                             # Dynamic progress: assume up to 0.7 during streaming
-                            self._progress = min(0.7, 0.1 + (0.6 * (chunk_count / 100.0)))
+                            self._progress = min(
+                                0.7, 0.1 + (0.6 * (chunk_count / 100.0))
+                            )
                         markdown_output = Markdown(completion_text.strip())
                         live.update(markdown_output, refresh=True)
                     with self._progress_lock:
@@ -214,10 +256,14 @@ class G4F_OT_Callback(bpy.types.Operator):
                 # print(completion_text)
             else:
                 self.logger.debug("Using non-streaming response")
-                self.console.print("[magenta]Generating non-streaming response...[/magenta]")
+                self.console.print(
+                    "[magenta]Generating non-streaming response...[/magenta]"
+                )
                 with self._progress_lock:
                     self._progress = 0.3  # Sending request
-                response = client.chat.completions.create(model=model, messages=formatted_messages)
+                response = client.chat.completions.create(
+                    model=model, messages=formatted_messages
+                )
                 with self._progress_lock:
                     self._progress = 0.7  # Response received
                 completion_text = str(response.choices[0].message.content)
@@ -232,13 +278,23 @@ class G4F_OT_Callback(bpy.types.Operator):
 
             # Process response into code buffers
             if self.is_image_model:
-                self.code_buffers = [f"# Image Description:\n# {completion_text.strip()}"]
+                self.code_buffers = [
+                    f"# Image Description:\n# {completion_text.strip()}"
+                ]
             else:
-                code_blocks = re.findall(r'```(?:python)?\s*\n(.*?)\n```', completion_text, re.DOTALL)
+                code_blocks = re.findall(
+                    r"```(?:python)?\s*\n(.*?)\n```", completion_text, re.DOTALL
+                )
                 if not code_blocks:
-                    code_blocks = re.findall(r'```(.*?)```', completion_text, re.DOTALL)
-                self.code_buffers = ([re.sub(r'^python', '', code.strip(), flags=re.MULTILINE) 
-                                    for code in code_blocks] if code_blocks else [completion_text])
+                    code_blocks = re.findall(r"```(.*?)```", completion_text, re.DOTALL)
+                self.code_buffers = (
+                    [
+                        re.sub(r"^python", "", code.strip(), flags=re.MULTILINE)
+                        for code in code_blocks
+                    ]
+                    if code_blocks
+                    else [completion_text]
+                )
 
             with self._progress_lock:
                 self._progress = 0.9  # Finalizing
@@ -247,7 +303,9 @@ class G4F_OT_Callback(bpy.types.Operator):
             self.is_done = True
 
         except Exception as e:
-            self.logger.error(f"Error in generation: {str(e)}\n{traceback.format_exc()}")
+            self.logger.error(
+                f"Error in generation: {str(e)}\n{traceback.format_exc()}"
+            )
             self.console.print(f"[red]Error during generation:[/red] {str(e)}")
             self.error = e
             self.is_cancelled = True
@@ -265,13 +323,15 @@ class G4F_OT_Callback(bpy.types.Operator):
         """
         try:
             if os.path.exists(JSON_PATH):
-                with open(JSON_PATH, 'r') as f:
+                with open(JSON_PATH, "r") as f:
                     config = json.load(f)
-                    image_models = config.get('image_models', [])
+                    image_models = config.get("image_models", [])
                     if model_name in image_models:
                         self.is_image_model = True
                         self.logger.info(f"Detected image model: {model_name}")
-                        self.console.print(f"[purple]Image model detected: {model_name}[/purple]")
+                        self.console.print(
+                            f"[purple]Image model detected: {model_name}[/purple]"
+                        )
                         return IMAGE_SYSTEM_PROMPT
             else:
                 self.logger.warning("Model config file not found")
@@ -299,7 +359,7 @@ class G4F_OT_Callback(bpy.types.Operator):
         self.logger.debug("Adding user message to chat history")
         self.console.print("[blue]Updating chat history...[/blue]")
         message = context.scene.g4f_chat_history.add()
-        message.type = 'user'
+        message.type = "user"
         message.content = context.scene.g4f_chat_input
         context.scene.g4f_chat_input = ""
 
@@ -323,18 +383,29 @@ class G4F_OT_Callback(bpy.types.Operator):
                     continue
 
                 self.logger.info(f"Processing code block {i + 1}/{len(code_buffers)}")
-                self.console.print(f"[green]Processing code block {i + 1}/{len(code_buffers)}...[/green]")
+                self.console.print(
+                    f"[green]Processing code block {i + 1}/{len(code_buffers)}...[/green]"
+                )
 
                 # Optionally preview code before execution (configurable via scene property)
-                if hasattr(context.scene, "g4f_preview_code") and context.scene.g4f_preview_code:
-                    self.console.print(f"[cyan]Preview:[/cyan]\n```python\n{blender_code}\n```")
-                    self.report({'INFO'}, f"Previewing code block {i + 1} - check console")
+                if (
+                    hasattr(context.scene, "g4f_preview_code")
+                    and context.scene.g4f_preview_code
+                ):
+                    self.console.print(
+                        f"[cyan]Preview:[/cyan]\n```python\n{blender_code}\n```"
+                    )
+                    self.report(
+                        {"INFO"}, f"Previewing code block {i + 1} - check console"
+                    )
                     continue  # Skip execution in preview mode
 
                 try:
                     # Compile first to catch syntax errors early
-                    compiled_code = compile(blender_code, f"<AI_code_block_{i + 1}>", "exec")
-                    
+                    compiled_code = compile(
+                        blender_code, f"<AI_code_block_{i + 1}>", "exec"
+                    )
+
                     # Set up context override
                     override = bpy.context.copy()
                     override["selected_objects"] = list(bpy.context.scene.objects)
@@ -342,7 +413,9 @@ class G4F_OT_Callback(bpy.types.Operator):
                         exec(compiled_code, safe_builtins, local_namespace)
 
                     self.logger.info(f"Code block {i + 1} executed successfully")
-                    self.console.print(f"[bold green]Code block {i + 1} executed successfully[/bold green]")
+                    self.console.print(
+                        f"[bold green]Code block {i + 1} executed successfully[/bold green]"
+                    )
                     executed_codes.append(blender_code)
 
                 except SyntaxError as se:
@@ -351,7 +424,7 @@ class G4F_OT_Callback(bpy.types.Operator):
                     self.console.print(f"[red]{error_msg}[/red]")
                     failed_code = append_error_as_comment(blender_code, error_msg)
                     executed_codes.append(failed_code)
-                    self.report({'ERROR'}, f"Syntax error in block {i + 1}: {se}")
+                    self.report({"ERROR"}, f"Syntax error in block {i + 1}: {se}")
 
                 except Exception as e:
                     error_msg = f"Error executing block {i + 1}: {str(e)}"
@@ -360,15 +433,17 @@ class G4F_OT_Callback(bpy.types.Operator):
                     full_traceback = traceback.format_exc()
                     failed_code = append_error_as_comment(blender_code, full_traceback)
                     executed_codes.append(failed_code)
-                    self.report({'ERROR'}, error_msg)
+                    self.report({"ERROR"}, error_msg)
 
-            response_content = "\n\n".join(executed_codes) if executed_codes else code_buffers[0]
+            response_content = (
+                "\n\n".join(executed_codes) if executed_codes else code_buffers[0]
+            )
 
         # Add response to chat history
         self.logger.debug("Adding assistant response to chat history")
         self.console.print("[blue]Adding response to chat history[/blue]")
         message = context.scene.g4f_chat_history.add()
-        message.type = 'assistant'
+        message.type = "assistant"
         message.content = response_content
 
         context.scene.g4f_button_pressed = False
@@ -404,15 +479,17 @@ class G4F_OT_Callback(bpy.types.Operator):
         except Exception as e:
             self.logger.error(f"Error during cleanup: {str(e)}")
             self.console.print(f"[red]Cleanup error:[/red] {str(e)}")
-            self.report({'ERROR'}, f"Cleanup failed: {str(e)}")
+            self.report({"ERROR"}, f"Cleanup failed: {str(e)}")
+
 
 class G4F_TEST_OT_TestModels(bpy.types.Operator):
     """Checks for working models and updates the list of active models.
     This operator is used to test all available models and update the list of active models.
     """
+
     bl_idname = "g4f.update_model_list"
     bl_label = "Test g4f Models"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
     bl_description = "Test all available models and update the list of active models.\n This may take a while."
 
     _timer = None
@@ -420,49 +497,54 @@ class G4F_TEST_OT_TestModels(bpy.types.Operator):
     _task = None
     working = []
     is_working = False
+
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not (Module_Updater.is_working or G4F_TEST_OT_TestModels.is_working or context.scene.g4f_button_pressed) 
+        return not (
+            Module_Updater.is_working
+            or G4F_TEST_OT_TestModels.is_working
+            or context.scene.g4f_button_pressed
+        )
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event) -> set:
         """Handle timer events for asynchronous task completion."""
 
-        if event.type == 'TIMER':
+        if event.type == "TIMER":
             self._loop.run_until_complete(asyncio.sleep(0))  # Process pending tasks
-            
+
             if self._task.done():
                 self.logger.debug("Task is done, cleaning up")
                 context.window_manager.event_timer_remove(self._timer)
                 self._loop.stop()
                 self._loop.close()
-                
+
                 non_working_models = set(g4f.models._all_models) - set(self.working)
                 non_working_models = list(non_working_models)
                 self.logger.info(f"Non-working models: {non_working_models}")
-                
+
                 path = JSON_PATH
-                
+
                 if not os.path.exists(path):
                     self.logger.debug(f"Creating new JSON file at {path}")
-                    with open(path, 'w') as f:
+                    with open(path, "w") as f:
                         json.dump({"active": [], "deprecated": []}, f)
-                
+
                 with open(path) as f:
                     data = json.load(f)
                 data["active"] = self.working
                 data["deprecated"] = non_working_models
-                with open(path, 'w') as f:
+                with open(path, "w") as f:
                     json.dump(data, f)
                     self.logger.info("Updated model information saved to JSON")
-                
+
                 create_models()
                 context.area.tag_redraw()
                 self.logger.debug("Redrawing context area")
                 G4F_TEST_OT_TestModels.is_working = False
                 self.logger.info("Model testing completed")
 
-                return {'FINISHED'}
-        return {'PASS_THROUGH'}
+                return {"FINISHED"}
+        return {"PASS_THROUGH"}
 
     async def run_provider(self, model):
         self.logger.debug(f"Testing model: {model}")
@@ -485,23 +567,23 @@ class G4F_TEST_OT_TestModels(bpy.types.Operator):
     def execute(self, context):
         self.logger = setup_logger()
         self.logger.info("Starting model tests")
-        
+
         # Reset lists
         self.working = []
         G4F_TEST_OT_TestModels.is_working = True
-        
+
         # Create and set up a new event loop
         self._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self._loop)
         self.logger.info("Created new event loop")
         self._task = self._loop.create_task(self.run_all())
         self.logger.info("Created task to run all models")
-        
+
         # Start the modal timer
         self._timer = context.window_manager.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
-        
-        return {'RUNNING_MODAL'}
+
+        return {"RUNNING_MODAL"}
 
     def cancel(self, context):
         if self._timer:
@@ -509,4 +591,3 @@ class G4F_TEST_OT_TestModels(bpy.types.Operator):
         if self._loop and self._loop.is_running():
             self._loop.stop()
             self._loop.close()
-
