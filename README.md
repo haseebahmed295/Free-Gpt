@@ -36,6 +36,12 @@
 
 
 ## Changelog:
+### 1.3:
+- Added ability to update the dependencies from preferences
+- Added model test option to check for working model
+- Added better output ui in console
+- Added progress bar
+
 ### 1.2.2:
 - Updated dependencies
 
