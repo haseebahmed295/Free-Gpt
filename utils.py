@@ -1,12 +1,17 @@
 import logging
 import os
 import bpy
-import g4f
-import g4f.client
 from .get_models import get_models
 
-g4f.debug.version_check = False
+no_dep = False
+try:
+    import g4f
+    import g4f.client
+    g4f.debug.version_check = False
+except ModuleNotFoundError:
+    no_dep = True
 
+import logging
 
 def wrap_prompt(prompt):
     wrapped = f"""{prompt} . Don't write code which uses bpy.context.active_object.Make sure to return all code in only one code blocks 

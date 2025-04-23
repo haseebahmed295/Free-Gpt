@@ -3,7 +3,13 @@ import bpy.props
 from .dependencies import Module_Updater
 from .ui_op import G4F_OT_ClearChat , G4T_Del_Message , G4F_OT_ShowCode
 from .prompt_op import G4F_OT_Callback, G4F_TEST_OT_TestModels
-import g4f.models
+
+no_dep = False
+try:
+    import g4f.models
+except ModuleNotFoundError:
+    no_dep = True
+
 class Chat_PT_history(bpy.types.Panel):
     bl_label = "Chat History"
     bl_idname = "G4T_PT_History"
@@ -14,7 +20,7 @@ class Chat_PT_history(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         column = layout.column(align=True)
-        column.enabled = not Module_Updater.is_working
+        column.enabled = not Module_Updater.is_working and not no_dep
         column.label(text="Chat history:")
         for index, message in enumerate(context.scene.g4f_chat_history):
             if index % 2 == 0:
@@ -30,6 +36,11 @@ class Chat_PT_history(bpy.types.Panel):
                 row.operator(G4T_Del_Message.bl_idname, text="", icon="TRASH", emboss=False).index = index
         layout.operator(G4F_OT_ClearChat.bl_idname, text="Clear Chat")
         column.separator()
+    
+        if Module_Updater.is_working:
+            column.label(text="Updating Dependencies..." , icon="ERROR")
+        elif no_dep:
+            column.label(text="Dependencies not installed" , icon="ERROR")
 
 class G4f_PT_main(bpy.types.Panel):
     bl_label = "Assistant GPT"
@@ -41,7 +52,7 @@ class G4f_PT_main(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         column = layout.column()
-        column.enabled = not Module_Updater.is_working
+        column.enabled = not Module_Updater.is_working and not no_dep
         
         # Model selection
         row = column.row(align=True)
@@ -85,3 +96,7 @@ class G4f_PT_main(bpy.types.Panel):
             else:
                 layout.label(text=status_text)
         
+        if Module_Updater.is_working:
+            column.label(text="Updating Dependencies..." , icon="ERROR")
+        elif no_dep:
+            column.label(text="Dependencies not installed" , icon="ERROR")

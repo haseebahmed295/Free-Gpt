@@ -12,6 +12,14 @@ bl_info = {
     "tracker_url": "",
 }
 
+if "bpy" in locals():
+    import importlib
+    importlib.reload(bpy)
+    importlib.reload(utils)
+    importlib.reload(dependencies)
+    importlib.reload(ui_op)
+    importlib.reload(interface)
+    importlib.reload(prompt_op)
 
 from .utils import create_models
 from .dependencies import Module_Updater
@@ -19,7 +27,12 @@ from .ui_op import G4F_OT_ClearChat, G4F_OT_ShowCode ,G4T_Del_Message
 from .interface import Chat_PT_history,G4f_PT_main 
 from .prompt_op import G4F_OT_Callback , G4F_TEST_OT_TestModels
 import bpy
-import g4f
+
+no_dep = False
+try:
+    import g4f
+except ModuleNotFoundError:
+    no_dep = True
 
 class G4FPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
@@ -27,14 +40,25 @@ class G4FPreferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         col = layout.column()
+        if no_dep:
+            col.label(text="Dependencies not installed")
+            col.label(text="Install dependencies to use this add-on")
+            col.operator(Module_Updater.bl_idname, text="Install Dependencies")
+            return
+        
         if bpy.app.online_access:
-            if context.scene.g4f_check_update:
+            try:
+                is_update = g4f.version.utils.current_version != g4f.version.utils.latest_version
+            except:
+                is_update = False
+            if is_update:
                 row = col.row()
                 row.label(text="New version available")
                 text = "Update Dependencies" if not Module_Updater.is_working else "Updating..."
                 row.operator(Module_Updater.bl_idname, text=text)
             else:
                 col.label(text="You are up to date")
+            
         else:
             col.label(text="No internet connection")
 
@@ -72,19 +96,11 @@ def register():
     bpy.types.PropertyGroup.content = bpy.props.StringProperty()
     bpy.types.Scene.g4f_button_pressed = bpy.props.BoolProperty()
     
-    update_available = False
-    if bpy.app.online_access:
-        try:
-            update_available = g4f.version.utils.current_version != g4f.version.utils.latest_version
-        except:
-            update_available = False
-    
-    bpy.types.Scene.g4f_check_update = bpy.props.BoolProperty(default=update_available)
+
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    del bpy.types.Scene.g4f_check_update
     del bpy.types.Scene.g4f_progress
     del bpy.types.Scene.g4f_chat_history
     del bpy.types.Scene.g4f_chat_input

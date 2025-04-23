@@ -1,8 +1,12 @@
 import json
-import g4f
 import os
 from .Settings import JSON_PATH
 from typing import List, Tuple
+no_dep = False
+try:
+    import g4f
+except ModuleNotFoundError:
+    no_dep = True
 
 def get_models() -> List[Tuple[str, str, str]]:
     """Get a list of available models.
@@ -18,10 +22,13 @@ def get_models() -> List[Tuple[str, str, str]]:
             data = json.load(file)
 
         deprecated_models = set(data["deprecated"])
-    available_models: List[Tuple[str, str, str]] = [
-        (model, model, model) 
-        for model in g4f.models._all_models 
-        if model not in deprecated_models
-    ]
+    if not no_dep:
+        available_models: List[Tuple[str, str, str]] = [
+            (model, model, model) 
+            for model in g4f.models._all_models 
+            if model not in deprecated_models
+        ]
+    else:
+        available_models = []
     return available_models
 

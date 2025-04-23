@@ -4,13 +4,7 @@ import re
 import traceback
 import threading
 import asyncio
-from g4f.client import AsyncClient
-import bpy.props
 import bpy
-import g4f
-from rich.console import Console
-from rich.live import Live
-from rich.markdown import Markdown
 from .dependencies import Module_Updater
 from .utils import (
     create_models,
@@ -21,26 +15,16 @@ from .utils import (
 )
 from .Settings import code_system_prompt, JSON_PATH, IMAGE_SYSTEM_PROMPT
 
-import os
-import json
-import re
-import traceback
-import threading
-from g4f.client import AsyncClient
-import bpy
-import g4f
-from rich.console import Console
-from rich.live import Live
-from rich.markdown import Markdown
-from .dependencies import Module_Updater
-from .utils import (
-    create_models,
-    setup_logger,
-    wrap_prompt,
-    append_error_as_comment,
-    stream_response,
-)
-from .Settings import code_system_prompt, JSON_PATH, IMAGE_SYSTEM_PROMPT
+no_dep = False
+try:
+    import g4f
+    from g4f.client import AsyncClient
+    from rich.console import Console
+    from rich.live import Live
+    from rich.markdown import Markdown
+except ModuleNotFoundError:
+    no_g4f = True
+
 
 
 class G4F_OT_Callback(bpy.types.Operator):
