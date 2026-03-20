@@ -192,6 +192,7 @@ class G4F_OT_Callback(bpy.types.Operator):
                     console=self.console, refresh_per_second=30, transient=False
                 ) as live:
                     chunk_count = 0
+                    content = ""
                     for chunk in stream_response(formatted_messages, model):
                         if self.is_cancelled:
                             self.logger.warning("Stream cancelled by user")

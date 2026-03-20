@@ -20,7 +20,6 @@ def get_models() -> List[Tuple[str, str, str]]:
     else:
         with open(file_path, 'r') as file:
             data = json.load(file)
-
         deprecated_models = set(data["deprecated"])
     if not no_dep:
         available_models: List[Tuple[str, str, str]] = [
@@ -28,7 +27,6 @@ def get_models() -> List[Tuple[str, str, str]]:
             for model in g4f.models._all_models 
             if model not in deprecated_models
         ]
-    else:
+    else: 
         available_models = []
     return available_models
-
